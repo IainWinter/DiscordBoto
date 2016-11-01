@@ -52,8 +52,7 @@ namespace MemeBot {
                     }
                 });
         }
-
-
+                               
         private void RegisterVoteCommand() {
             commands.CreateCommand("vote")
                 .Parameter("Param1", ParameterType.Optional)
@@ -70,7 +69,6 @@ namespace MemeBot {
                 if (u.Name.Equals(p1)) {
                     p1IsName = true;
                     id = u.Id;
-                    continue;
                 }
             }
 
@@ -79,14 +77,24 @@ namespace MemeBot {
         }
 
         private ulong GetLastId(Channel c) {
-            throw new NotImplementedException();
+            foreach(Message m in GetMessageList(c)) {
+                if (m.Attachments.Length > 0 || m.Text.Contains("http://") || m.Text.Contains("https://")) {
+                    return m.User.Id;
+                }
+
+            }
+            return 0;
+
+        }
+
+        private Message[] GetMessageList(Channel c) {
+            return c.DownloadMessages(100).Result;
         }
 
         private string GetMessageForRank(string[] paramValues) {
             MySqlParameter[] parameters = new MySqlParameter[2];
-            if (parameters == null) return "Error";
 
-            SqlQuery sqlQuery = new SqlQuery("localhost", "root", Password.pass, "memerank");
+            SqlQuery sqlQuery = new SqlQuery("localhost", "root", "[poassword", "memerank");
 
             parameters[0] = new MySqlParameter("?ID", MySqlDbType.Int64);
             parameters[0].Value = Int64.Parse(paramValues[0]);
@@ -95,7 +103,7 @@ namespace MemeBot {
             sqlQuery.SetQuery("INSERT INTO Ranks (ID, Rank) VALUES (?ID, ?Rank)", parameters);
             sqlQuery.ExecuteQuery(QueryTypes.INSERT);
 
-            return parameters[0] + " " + parameters[1];
+            return "Rank added";
         }
 
         private string GetUserRank(ulong userId) {
