@@ -36,8 +36,14 @@ namespace MemeBot {
             this.parameters = parameters;
         }
 
-        internal MySqlDataReader ExecuteQuery(QueryTypes type) {
+        internal Dictionary<string, List<string>> ExecuteQuery(QueryTypes type) {
             MySqlDataReader dataReader = null;
+
+            List<string> ids = new List<string>();
+            List<string> ranks = new List<string>();
+            List<string> links = new List<string>();
+
+
             using (MySqlConnection conn = new MySqlConnection("Server=" + server + ";Uid=" + user + ";Pwd=" + password + ";Database=" + database + ";")) {
                 using (MySqlCommand command = new MySqlCommand(queryString, conn)) {
                     try {
@@ -49,6 +55,13 @@ namespace MemeBot {
                             case QueryTypes.SELECT: { dataReader = command.ExecuteReader(); break; }
                             default: { throw new InvalidOperationException(); }
                         }
+                        
+                        while(dataReader.Read()) {
+                            ids.Add(dataReader.GetInt64(0) + "");
+                            ranks.Add(dataReader.GetDouble(1) + "");
+                            links.Add(dataReader.GetString(2));
+                        }
+
                     } catch (SqlException e) {
                         Console.WriteLine(e);
                     } finally {
@@ -59,7 +72,11 @@ namespace MemeBot {
                 }
 
             }
-            return dataReader;
+            Dictionary<string, List<string>> results = new Dictionary<string, List<string>>();
+            results.Add("Ids", ids);
+            results.Add("Ranks", ranks);
+            results.Add("Links", links);
+            return results;
         }
 
     }

@@ -31,7 +31,7 @@ namespace MemeBot {
             commands = discord.GetService<CommandService>();
             RegisterPurgeCommand();
             RegisterVoteCommand();
-
+            RegisterGetRankCommand();
 
             discord.Log.Message += (s, e) => Console.WriteLine($"[{e.Severity}] {e.Source}: {e.Message}");
 
@@ -58,8 +58,25 @@ namespace MemeBot {
                 .Parameter("Param1", ParameterType.Optional)
                 .Parameter("Param2", ParameterType.Optional)
                 .Do(async c => {                   
-                    await c.Channel.SendMessage(GetMessageForRank(InterpretParameters(c.Channel, c.Server.Users, (string)c.GetArg("Param1"), (string)c.GetArg("Param2"))));
+                    await c.Channel.SendMessage(GetMessageForRank(InterpretParameters(c.Channel, c.Server.Users, (string)c.GetArg("Param1"), (string)c.GetArg("Param2")), c.Channel));
                 });
+        }
+
+        private void RegisterGetRankCommand() {
+            commands.CreateCommand("rank")
+                .Parameter("Name", ParameterType.Required)
+                .Do(async c => {
+                    await c.Channel.SendMessage(GetUserRank(GetIdFromName(c.Server.Users, (string)c.GetArg("Name"))));
+                });
+        }
+
+        private ulong GetIdFromName(IEnumerable<User> users, string name) {
+            foreach(User u in users) {
+                if(u.Name.Equals(name)) {
+                    return u.Id;
+                }
+            }
+            return 0;
         }
 
         private string[] InterpretParameters(Channel c, IEnumerable<User> users, string p1, string p2) {
@@ -73,7 +90,7 @@ namespace MemeBot {
             }
 
             if (p1IsName) return new string[] { id + "", p2 };
-            else return new string[] { GetLastId(c) + "", p1 };
+            else return new string[] { GetLastMessage(c).User.Id + "", p1 };
         }
 
         private string GetAttachment(Message m) {
@@ -84,21 +101,20 @@ namespace MemeBot {
                 while(t.Contains(" ")) {
                     t = t.TrimEnd(' ');
                 }
-                t = t.TrimStart(':');
-                return "http" + t;
+                return t;
             } else {
                 return null;
             }
         }
 
-        private ulong GetLastId(Channel c) {
+        private Message GetLastMessage(Channel c) {
             foreach(Message m in GetMessageList(c)) {
                 if (m.Attachments.Length > 0 || m.Text.Contains("http://") || m.Text.Contains("https://")) {
-                    return m.User.Id;
+                    return m;
                 }
 
             }
-            return 0;
+            throw new Exception();
 
         }
 
@@ -106,8 +122,8 @@ namespace MemeBot {
             return c.DownloadMessages(100).Result;
         }
 
-        private string GetMessageForRank(string[] paramValues) {
-            MySqlParameter[] parameters = new MySqlParameter[2];
+        private string GetMessageForRank(string[] paramValues, Channel c) {
+            MySqlParameter[] parameters = new MySqlParameter[3];
 
             SqlQuery sqlQuery = new SqlQuery("localhost", "root", "[poassword", "memerank");
 
@@ -116,8 +132,8 @@ namespace MemeBot {
             parameters[1] = new MySqlParameter("?Rank", MySqlDbType.Double);
             parameters[1].Value = Double.Parse(paramValues[1]);
             parameters[2] = new MySqlParameter("?Link", MySqlDbType.VarChar);
-            //parameters[2].Value = GetAttachment();
-            sqlQuery.SetQuery("INSERT INTO Ranks (ID, Rank) VALUES (?ID, ?Rank)", parameters);
+            parameters[2].Value = GetAttachment(GetLastMessage(c));
+            sqlQuery.SetQuery("INSERT INTO Ranks (ID, Rank, Link) VALUES (?ID, ?Rank, ?Link)", parameters);
             sqlQuery.ExecuteQuery(QueryTypes.INSERT);
 
             return "Rank added";
@@ -129,8 +145,22 @@ namespace MemeBot {
             parameters[0] = new MySqlParameter("?ID", MySqlDbType.Int64);
             parameters[0].Value = (Int64)userId;
             sqlQuery.SetQuery("SELECT * FROM Ranks WHERE ID = ?ID", parameters);
-            MySqlDataReader results = sqlQuery.ExecuteQuery(QueryTypes.SELECT);
-            return "";
+            Dictionary<string, List<string>> results = sqlQuery.ExecuteQuery(QueryTypes.SELECT);
+
+            //Get ranks from sql
+            List<string> ranks = new List<string>();
+            results.TryGetValue("Ranks", out ranks);
+            //Vars for average
+            int count = 0;
+            int total = 0;
+
+            //Average
+            foreach(string i in ranks) {
+                count++;
+                total += int.Parse(i);
+            } 
+
+            return (double) total / count + "";
         }
 
         private void Log(object sender, LogMessageEventArgs e) {
