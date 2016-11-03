@@ -57,7 +57,7 @@ namespace MemeBot {
             commands.CreateCommand("vote")
                 .Parameter("Param1", ParameterType.Optional)
                 .Parameter("Param2", ParameterType.Optional)
-                .Do(async c => {
+                .Do(async c => {                   
                     await c.Channel.SendMessage(GetMessageForRank(InterpretParameters(c.Channel, c.Server.Users, (string)c.GetArg("Param1"), (string)c.GetArg("Param2"))));
                 });
         }
@@ -74,6 +74,21 @@ namespace MemeBot {
 
             if (p1IsName) return new string[] { id + "", p2 };
             else return new string[] { GetLastId(c) + "", p1 };
+        }
+
+        private string GetAttachment(Message m) {
+            if(m.Attachments.Length > 0) {
+                return m.Attachments[0].Url;
+            } else if (m.Text.Contains("http://") || m.Text.Contains("https://")) {
+                string t = m.RawText;
+                while(t.Contains(" ")) {
+                    t = t.TrimEnd(' ');
+                }
+                t = t.TrimStart(':');
+                return "http" + t;
+            } else {
+                return null;
+            }
         }
 
         private ulong GetLastId(Channel c) {
@@ -100,6 +115,8 @@ namespace MemeBot {
             parameters[0].Value = Int64.Parse(paramValues[0]);
             parameters[1] = new MySqlParameter("?Rank", MySqlDbType.Double);
             parameters[1].Value = Double.Parse(paramValues[1]);
+            parameters[2] = new MySqlParameter("?Link", MySqlDbType.VarChar);
+            //parameters[2].Value = GetAttachment();
             sqlQuery.SetQuery("INSERT INTO Ranks (ID, Rank) VALUES (?ID, ?Rank)", parameters);
             sqlQuery.ExecuteQuery(QueryTypes.INSERT);
 

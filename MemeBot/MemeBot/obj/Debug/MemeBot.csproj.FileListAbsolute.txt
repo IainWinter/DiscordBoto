@@ -19,3 +19,24 @@ E:\Documents\Visual Studio 2015\Projects\MemeBot\MemeBot\bin\Debug\RestSharp.xml
 E:\Documents\Visual Studio 2015\Projects\MemeBot\MemeBot\obj\Debug\MemeBot.csprojResolveAssemblyReference.cache
 E:\Documents\Visual Studio 2015\Projects\MemeBot\MemeBot\obj\Debug\MemeBot.exe
 E:\Documents\Visual Studio 2015\Projects\MemeBot\MemeBot\obj\Debug\MemeBot.pdb
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\MemeBot.exe.config
+E:\Documents\DiscordBoto\MemeBot\MemeBot\obj\Debug\MemeBot.exe
+E:\Documents\DiscordBoto\MemeBot\MemeBot\obj\Debug\MemeBot.pdb
+E:\Documents\DiscordBoto\MemeBot\MemeBot\obj\Debug\MemeBot.csprojResolveAssemblyReference.cache
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\MemeBot.exe
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\MemeBot.pdb
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Discord.Net.Commands.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Discord.Net.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\MySql.Data.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Newtonsoft.Json.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.Concurrent.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.Enlightenment.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\RestSharp.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\WebSocket4Net.dll
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\MySql.Data.xml
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Newtonsoft.Json.xml
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.xml
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.Concurrent.xml
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.Enlightenment.xml
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\RestSharp.xml
