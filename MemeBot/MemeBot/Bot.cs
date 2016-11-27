@@ -52,12 +52,12 @@ namespace MemeBot {
                     }
                 });
         }
-                               
+
         private void RegisterVoteCommand() {
             commands.CreateCommand("vote")
                 .Parameter("Param1", ParameterType.Optional)
                 .Parameter("Param2", ParameterType.Optional)
-                .Do(async c => {                   
+                .Do(async c => {
                     await c.Channel.SendMessage(GetMessageForRank(InterpretParameters(c.Channel, c.Server.Users, (string)c.GetArg("Param1"), (string)c.GetArg("Param2")), c.Channel));
                 });
         }
@@ -71,8 +71,8 @@ namespace MemeBot {
         }
 
         private ulong GetIdFromName(IEnumerable<User> users, string name) {
-            foreach(User u in users) {
-                if(u.Name.Equals(name)) {
+            foreach (User u in users) {
+                if (u.Name.Equals(name)) {
                     return u.Id;
                 }
             }
@@ -82,23 +82,39 @@ namespace MemeBot {
         private string[] InterpretParameters(Channel c, IEnumerable<User> users, string p1, string p2) {
             bool p1IsName = false;
             ulong id = 0;
+            Message m = null;
             foreach (User u in users) {
-                if (u.Name.Equals(p1)) {
+                if (u.Name.Replace(" ", "").Equals(p1)) {
                     p1IsName = true;
                     id = u.Id;
+                    m = GetLastMessage(c, id);
                 }
             }
 
-            if (p1IsName) return new string[] { id + "", p2 };
-            else return new string[] { GetLastMessage(c).User.Id + "", p1 };
+            if (m == null) return null;
+            else if (p1IsName) return new string[] { id + "", p2 };
+            else return new string[] { m.User.Id + "", p1 };
+        }
+
+        private bool ValidateParameters(string[] paramValues) {
+            //If invalid parameters
+            if (paramValues == null) return false;
+
+            //If rank is out of range
+            int rank = 0;
+            int.TryParse(paramValues[0], out rank);
+            if (rank > 5 || rank < 0) return false;
+
+            //If params are ok
+            return true;
         }
 
         private string GetAttachment(Message m) {
-            if(m.Attachments.Length > 0) {
+            if (m.Attachments.Length > 0) {
                 return m.Attachments[0].Url;
             } else if (m.Text.Contains("http://") || m.Text.Contains("https://")) {
                 string t = m.RawText;
-                while(t.Contains(" ")) {
+                while (t.Contains(" ")) {
                     t = t.TrimEnd(' ');
                 }
                 return t;
@@ -107,14 +123,14 @@ namespace MemeBot {
             }
         }
 
-        private Message GetLastMessage(Channel c) {
-            foreach(Message m in GetMessageList(c)) {
+        private Message GetLastMessage(Channel c, ulong id) {
+            foreach (Message m in GetMessageList(c)) {
                 if (m.Attachments.Length > 0 || m.Text.Contains("http://") || m.Text.Contains("https://")) {
-                    return m;
+                    if(m.User.Id == id) return m;
                 }
 
             }
-            throw new Exception();
+            return null;
 
         }
 
@@ -123,6 +139,9 @@ namespace MemeBot {
         }
 
         private string GetMessageForRank(string[] paramValues, Channel c) {
+
+            if (!ValidateParameters(paramValues)) return "Invalid parameters";
+
             MySqlParameter[] parameters = new MySqlParameter[3];
 
             SqlQuery sqlQuery = new SqlQuery("localhost", "root", "[poassword", "memerank");
@@ -132,7 +151,7 @@ namespace MemeBot {
             parameters[1] = new MySqlParameter("?Rank", MySqlDbType.Double);
             parameters[1].Value = Double.Parse(paramValues[1]);
             parameters[2] = new MySqlParameter("?Link", MySqlDbType.VarChar);
-            parameters[2].Value = GetAttachment(GetLastMessage(c));
+            parameters[2].Value = GetAttachment(GetLastMessage(c, ulong.Parse(paramValues[1])));
             sqlQuery.SetQuery("INSERT INTO Ranks (ID, Rank, Link) VALUES (?ID, ?Rank, ?Link)", parameters);
             sqlQuery.ExecuteQuery(QueryTypes.INSERT);
 
@@ -155,12 +174,12 @@ namespace MemeBot {
             int total = 0;
 
             //Average
-            foreach(string i in ranks) {
+            foreach (string i in ranks) {
                 count++;
                 total += int.Parse(i);
-            } 
+            }
 
-            return (double) total / count + "";
+            return (double)total / count + "";
         }
 
         private void Log(object sender, LogMessageEventArgs e) {

@@ -43,7 +43,6 @@ namespace MemeBot {
             List<string> ranks = new List<string>();
             List<string> links = new List<string>();
 
-
             using (MySqlConnection conn = new MySqlConnection("Server=" + server + ";Uid=" + user + ";Pwd=" + password + ";Database=" + database + ";")) {
                 using (MySqlCommand command = new MySqlCommand(queryString, conn)) {
                     try {
@@ -65,18 +64,19 @@ namespace MemeBot {
                     } catch (SqlException e) {
                         Console.WriteLine(e);
                     } finally {
-                        command.Clone();
-                        conn.Clone();
+                        conn.Close();
                     }
 
                 }
 
             }
+
             Dictionary<string, List<string>> results = new Dictionary<string, List<string>>();
             results.Add("Ids", ids);
             results.Add("Ranks", ranks);
             results.Add("Links", links);
             return results;
+
         }
 
     }
