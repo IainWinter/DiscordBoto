@@ -40,3 +40,7 @@ E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.xml
 E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.Concurrent.xml
 E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\Nito.AsyncEx.Enlightenment.xml
 E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\RestSharp.xml
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\MemeBot.exe.manifest
+E:\Documents\DiscordBoto\MemeBot\MemeBot\bin\Debug\MemeBot.application
+E:\Documents\DiscordBoto\MemeBot\MemeBot\obj\Debug\MemeBot.exe.manifest
+E:\Documents\DiscordBoto\MemeBot\MemeBot\obj\Debug\MemeBot.application

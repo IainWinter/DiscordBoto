@@ -23,31 +23,28 @@ namespace MemeBot {
 
             //Define commands prefix
             discord.UsingCommands(x => {
-                x.PrefixChar = '.';
+                x.PrefixChar = '!';
                 x.AllowMentionPrefix = true;
             });
 
             //Define commands
             commands = discord.GetService<CommandService>();
-            RegisterPurgeCommand();
-            RegisterSetupCommand();
-            RegisterVoteCommand();
-            RegisterGetRankCommand();
+            RegisterMemesCommand();
+            //RegisterPurgeCommand();
+            //RegisterVoteCommand();
+            //RegisterGetRankCommand();
 
             discord.Log.Message += (s, e) => Console.WriteLine($"[{e.Severity}] {e.Source}: {e.Message}");
 
             discord.ExecuteAndWait(async () => {
                 await discord.Connect("MjU4NDM1NTMzNzYyNDYxNjk3.CzJOkA.8kITPt2xLe_D9SGvUUzcXQrEaF8", TokenType.Bot);
             });
-
         }
 
-        private void RegisterSetupCommand() {
-            commands.CreateCommand("setup")
-                .Do(async (c) => {
-                    if (c.User.Id == (ulong)176185451902664705) {
-                        await c.Channel.SendMessage(SetUp(c.Channel, c.User.Id));
-                    }
+        private void RegisterMemesCommand() {
+            commands.CreateCommand("countall")
+                .Do(async (e) => {
+                    await e.Channel.SendMessage(".countall");
                 });
         }
 
@@ -83,7 +80,7 @@ namespace MemeBot {
 
         private ulong GetIdFromName(IEnumerable<User> users, string name) {
             foreach (User u in users) {
-                if (u.Name.Equals(name)) {
+                if (name.Contains(u.Id + "") || u.Name.Equals(name)) {
                     return u.Id;
                 }
             }
@@ -98,7 +95,8 @@ namespace MemeBot {
                     p1IsName = true;
                     id = u.Id;
                 }
-
+                if (p1.Contains(u.Id + ""))
+                    return new string[] { u.Id + "", p2 };
             }
 
             if (p1IsName) return new string[] { id + "", p2 };
@@ -214,15 +212,8 @@ namespace MemeBot {
                 count++;
                 total += int.Parse(i);
             }
-
-            return name + "'s rank is " + (double)total / count;
-        }
-
-        private string SetUp(Channel c, ulong id) {
-            foreach (User u in c.Users) {
-                GetMessageForRank(new string[] {u.Id + "","5"}, c, (Int64) 0, true);
-            }
-            return "Setup is done";
+            if (count == 0) return name + " is not a user";
+            else            return name + "'s rank is " + (double)total / count;
         }
 
         private void Log(object sender, LogMessageEventArgs e) {
