@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MemeBot {
     static class Password {
 
-        internal static string pass = "[poassword";
+        internal static string pass = "<Password>";
 
     }
 }
