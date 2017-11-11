@@ -36,7 +36,7 @@ namespace MemeBot {
             discord.Log.Message += (s, e) => Console.WriteLine($"[{e.Severity}] {e.Source}: {e.Message}");
 
             discord.ExecuteAndWait(async () => {
-                await discord.Connect("MjQwMzEzNzE4NTk5MDU3NDA5.CvUSVw.WyXvoZIGC6eATIssc8XMrxjrf1I", TokenType.Bot);
+                await discord.Connect("<Server>", TokenType.Bot);
             });
 
         }
